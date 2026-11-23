@@ -1,0 +1,16 @@
+datasets 
+evaluate 
+transformers[sentencepiece]
+
+huggingface_hub
+
+jupyter 
+ipykernel
+
+codecarbon
+
+python-dotenv
+
+--extra-index-url https://download.pytorch.org/whl/cu134
+torch
+torchvision
