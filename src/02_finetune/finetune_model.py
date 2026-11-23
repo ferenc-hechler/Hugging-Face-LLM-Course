@@ -7,7 +7,11 @@ import torch;
 print(f"GPU: {torch.cuda.is_available()}")
 
 
-model_name = "Qwen/Qwen3-0.6B"
+# model_name = "Qwen/Qwen3-0.6B"
+# new_model_name = "qwen3-finetuned/final"
+model_name = "google/gemma-3-270m-it"
+new_model_name = "gemma3-finetuned/final"
+
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 dataset = load_dataset("karthiksagarn/astro_horoscope", split="train")
 
@@ -31,18 +35,20 @@ from transformers import AutoModelForCausalLM, TrainingArguments, Trainer
 model = AutoModelForCausalLM.from_pretrained(model_name, dtype="auto")
 
 training_args = TrainingArguments(
-    output_dir="qwen3-finetuned",
+    output_dir="gemma3-finetuned",
     num_train_epochs=3,
-    per_device_train_batch_size=2,
-    gradient_accumulation_steps=8,
+    per_device_train_batch_size=1,
+    per_device_eval_batch_size=1, 
+    gradient_accumulation_steps=16,
     gradient_checkpointing=True,
-    gradient_checkpointing_kwargs={"every_n_layers": 4},
+    # gradient_checkpointing_kwargs={"every_n_layers": 4},
     bf16=True,
     learning_rate=2e-5,
     logging_steps=10,
     eval_strategy="epoch",
     save_strategy="epoch",
     load_best_model_at_end=True,
+    prediction_loss_only=True,             # Logits nicht sammeln
 )
 
 trainer = Trainer(
@@ -59,7 +65,7 @@ trainer.train()
 # trainer.push_to_hub()
 
 print("saving...")
-trainer.save_model("qwen3-finetuned/final")
-tokenizer.save_pretrained("qwen3-finetuned/final")
+trainer.save_model(new_model_name)
+tokenizer.save_pretrained(new_model_name)
 
 print("finished")

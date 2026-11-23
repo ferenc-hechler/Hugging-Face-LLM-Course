@@ -1,6 +1,9 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
-path = "qwen3-finetuned/final"
+# path = "qwen3-finetuned/final"
+path = "gemma3-finetuned/final"
+
+
 tokenizer = AutoTokenizer.from_pretrained(path)
 model = AutoModelForCausalLM.from_pretrained(path, dtype="auto")
 
