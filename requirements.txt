@@ -1,6 +1,11 @@
+--extra-index-url https://download.pytorch.org/whl/cu134
+torch
+torchvision
+
+
 datasets 
 evaluate 
-transformers[sentencepiece]
+transformers[sentencepiece,torch]
 
 huggingface_hub
 
@@ -11,6 +16,3 @@ codecarbon
 
 python-dotenv
 
---extra-index-url https://download.pytorch.org/whl/cu134
-torch
-torchvision
