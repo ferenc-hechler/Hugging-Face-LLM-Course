@@ -1,15 +1,20 @@
 # see https://huggingface.co/docs/transformers/training for more details
 from datasets import load_dataset
 from transformers import AutoTokenizer, DataCollatorForLanguageModeling
-
-
+import time
 import torch; 
+
+
 print(f"GPU: {torch.cuda.is_available()}")
 
-model_name = "Qwen/Qwen3-0.6B"
+# model_name = "Qwen/Qwen3-0.6B"
+model_name = "qwen3-finetuned/v1"
 new_model_name = "qwen3-finetuned"
 # model_name = "google/gemma-3-270m-it"
 # new_model_name = "gemma3-finetuned"
+
+
+start = time.time()
 
 
 tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -36,7 +41,7 @@ model = AutoModelForCausalLM.from_pretrained(model_name, dtype="auto")
 
 training_args = TrainingArguments(
     output_dir=new_model_name,
-    num_train_epochs=3,
+    num_train_epochs=7,
     per_device_train_batch_size=1,
     per_device_eval_batch_size=1, 
     gradient_accumulation_steps=16,
@@ -50,6 +55,10 @@ training_args = TrainingArguments(
     load_best_model_at_end=True,
     prediction_loss_only=True,             # Logits nicht sammeln
 )
+
+prep = time.time()
+print(f"Preprocessing time: {(prep - start)/60} minutes")
+
 
 trainer = Trainer(
     model=model,
@@ -67,5 +76,8 @@ trainer.train()
 print("saving...")
 trainer.save_model(f"{new_model_name}/final")
 tokenizer.save_pretrained(f"{new_model_name}/final")
+
+stop = time.time()
+print(f"Training time: {(stop - start)/60} minutes")
 
 print("finished")

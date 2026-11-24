@@ -1,4 +1,28 @@
-# Finetuned Qwen3
+# Finetuned Qwen3 (10 Epochs)
+
+
+qwen3-finetuned/v2 0: Today your horoscope says that you will be greatly influenced by someone else. You will feel that he or she is the one to guide you in the right direction. This will help you in whatever you are doing. You will be more successful if you can get your hands on this person. This person is the one who is going to be guiding you. You may not be able to help yourself. This is your best bet. You can be influenced by others. You can't help it! You will find that you are
+
+qwen3-finetuned/v2 1: Today your horoscope says that you will be in a very good position to accomplish your dreams. You will find that you can be quite successful and have a lot of power and influence in your field. You have the ability to be the center of attention. It is important to remember that success doesn't mean being pretty all the time. You have to wear your luck on your good side. Enjoy your success, but don't let it get you down. You are as good as ever! You will definitely want to go out
+
+qwen3-finetuned/v2 2: Today your horoscope says that you may have to be very careful about your motives, Virgo. You will find that people are more sensitive than usual, and you will need to be more sensitive to them in return. You may not be able to keep your emotions under control for a long time. Be careful about your words. They will have lasting consequences. Avoid making any statements that don't concern you. Be aware of your actions and speak your mind. You'll be able to get through to someone more easily if you
+
+qwen3-finetuned/v2 3: Today your horoscope says that you will be in an incredibly exciting and powerful position. If you have been waiting for someone to step in and make you feel better, then this is just the person to do it. You will be feeling especially powerful and strong, and you will be able to make any decision with ease. Don't be afraid to take control of your situation. You will succeed. Enjoy your power! You will succeed. Enjoy your power! You will succeed. Enjoy your power! You will succeed. Enjoy your
+
+qwen3-finetuned/v2 4: Today your horoscope says that you are in a difficult position. You may be forced to make a difficult choice that you aren't sure how to make. You may be tempted to take a side that you are not sure is right. Be careful. Be yourself. You may be right. Be prepared to make your choice. You are in a difficult position. You will need to make a decision. Do it. You will be rewarded. Be prepared. You will need to take care of this one. Be yourself. You
+
+qwen3-finetuned/v2 5: Today your horoscope says that you are likely to find love in some of the most unlikely places. You may be tempted to go to a very unconventional meeting, or perhaps go out with a little more than the usual. But you will find that this is a wonderful day for you to meet someone who is very different from you. You will also find that you can be quite passionate. Enjoy yourself. You will find the right person. You could be in a wonderful position to make some very nice plans for the future. You
+
+qwen3-finetuned/v2 6: Today your horoscope says that you will be in a very difficult position. You will be forced to choose between your own needs and the needs of the people around you. You are in a difficult situation. Don't let this get you down. Use your judgment to make the right decisions. You will be successful in the long run. You will be in a better position to make the right choices. Don't be afraid of the consequences. Take action. You will succeed. You just need to be bold. You have all
+
+qwen3-finetuned/v2 7: Today your horoscope says that you have the ability to be very successful at everything you try. You're going to be able to accomplish this with ease. There is no doubt about this. You will certainly accomplish your goals. Don't be afraid to try new things and keep yourself motivated. You will succeed. Just be careful with the success you have. It's important to be aware of what you're getting. Enjoy the rewards. It's worth it! You're in the spotlight! Give yourself some spotlight. You're
+
+qwen3-finetuned/v2 8: Today your horoscope says that you will be very lucky, and you will receive a lot of good luck in the form of a lot of money. If you are in the business of selling, you may receive a lot of money, but if you are in the business of reading, you may receive a lot of money, as well. You will be lucky to receive money in any field. Luck is with you. Go for it! Luck is with you. Go for it! You will be lucky to receive money in
+
+qwen3-finetuned/v2 9: Today your horoscope says that you have a chance to meet a new person. The chance is yours, so don't miss it. You will find that this person is quite special to you, and that you will certainly want to spend some time with them. You will certainly meet someone special. You are in luck! You have a wonderful opportunity to make a great impression. Don't be afraid to display your best features. You will be admired and respected! You will certainly be happy. You deserve it! You have a
+
+
+# Finetuned Qwen3 (3 Epochs)
 
 qwen3-finetuned/final 0: Today your horoscope says that you're going to be very lucky today. If you are in the mood to be lucky, then you can take advantage of it. If you are in the mood to have a good time, then you can take advantage of it. It's important to remember that you are not always at your best when it comes to your physical appearance. You need to get your exercise and eat well. Your mind will be more focused and focused on you. You will be at your best. If you are
 
