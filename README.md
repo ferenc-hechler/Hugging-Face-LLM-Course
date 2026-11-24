@@ -159,4 +159,10 @@ from huggingface_hub import snapshot_download
 snapshot_download(repo_id="google/gemma-3-270m-it", repo_type="model")
 ```
 
+# Intel GPUs
+
+https://docs.pytorch.org/docs/2.15/notes/get_start_xpu.html
+https://www.intel.com/content/www/us/en/developer/articles/tool/pytorch-prerequisites-for-intel-gpu/2-15.html
+https://huggingface.co/docs/transformers/intel_gpu
+
 

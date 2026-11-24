@@ -6,11 +6,11 @@ from transformers import AutoTokenizer, DataCollatorForLanguageModeling
 import torch; 
 print(f"GPU: {torch.cuda.is_available()}")
 
+model_name = "Qwen/Qwen3-0.6B"
+new_model_name = "qwen3-finetuned"
+# model_name = "google/gemma-3-270m-it"
+# new_model_name = "gemma3-finetuned"
 
-# model_name = "Qwen/Qwen3-0.6B"
-# new_model_name = "qwen3-finetuned/final"
-model_name = "google/gemma-3-270m-it"
-new_model_name = "gemma3-finetuned/final"
 
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 dataset = load_dataset("karthiksagarn/astro_horoscope", split="train")
@@ -35,7 +35,7 @@ from transformers import AutoModelForCausalLM, TrainingArguments, Trainer
 model = AutoModelForCausalLM.from_pretrained(model_name, dtype="auto")
 
 training_args = TrainingArguments(
-    output_dir="gemma3-finetuned",
+    output_dir=new_model_name,
     num_train_epochs=3,
     per_device_train_batch_size=1,
     per_device_eval_batch_size=1, 
@@ -60,12 +60,12 @@ trainer = Trainer(
     data_collator=DataCollatorForLanguageModeling(tokenizer, mlm=False),
 )
 
-print("training...")
+print(f"training {new_model_name} ...")
 trainer.train()
 # trainer.push_to_hub()
 
 print("saving...")
-trainer.save_model(new_model_name)
-tokenizer.save_pretrained(new_model_name)
+trainer.save_model(f"{new_model_name}/final")
+tokenizer.save_pretrained(f"{new_model_name}/final")
 
 print("finished")
