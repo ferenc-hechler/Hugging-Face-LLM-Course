@@ -7,17 +7,43 @@ import torch;
 
 print(f"GPU: {torch.cuda.is_available()}")
 
-# model_name = "Qwen/Qwen3-0.6B"
-model_name = "qwen3-finetuned/v1"
-new_model_name = "qwen3-finetuned"
-# model_name = "google/gemma-3-270m-it"
-# new_model_name = "gemma3-finetuned"
+NUM_EPOCHS = 1
 
+
+# model_name = "Qwen/Qwen3-0.6B"
+# version = None
+# new_model_name = "qwen3-finetuned"
+# new_version = "v1"
+
+# model_name = "qwen3-finetuned"
+# version = "v1"
+# new_model_name = "qwen3-finetuned"
+# new_version = "v2"
+
+# model_name = "google/gemma-3-270m-it"
+# version = None
+# new_model_name = "gemma3-finetuned"
+# new_version = "v1"
+
+model_name = "gemma3-finetuned"
+version = "v1"
+new_model_name = "gemma3-finetuned"
+new_version = "v2"
+
+# OOM with 8GB VRAM
+# model_name = "Qwen/Qwen3.5-2B"
+# version = None
+# new_model_name = "qwen3-5-2b-finetuned"
+# new_version = "v1"
+
+
+versioned_model_name = f"{model_name}/{version}" if version else model_name
+versioned_new_model_name = f"{new_model_name}/{new_version}" if new_version else new_model_name
 
 start = time.time()
 
 
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(versioned_model_name)
 dataset = load_dataset("karthiksagarn/astro_horoscope", split="train")
 
 def tokenize(batch):
@@ -37,11 +63,11 @@ data_collator = DataCollatorForLanguageModeling(tokenizer, mlm=False)
 
 from transformers import AutoModelForCausalLM, TrainingArguments, Trainer
 
-model = AutoModelForCausalLM.from_pretrained(model_name, dtype="auto")
+model = AutoModelForCausalLM.from_pretrained(versioned_model_name, dtype="auto")
 
 training_args = TrainingArguments(
     output_dir=new_model_name,
-    num_train_epochs=7,
+    num_train_epochs=NUM_EPOCHS,
     per_device_train_batch_size=1,
     per_device_eval_batch_size=1, 
     gradient_accumulation_steps=16,
@@ -69,13 +95,13 @@ trainer = Trainer(
     data_collator=DataCollatorForLanguageModeling(tokenizer, mlm=False),
 )
 
-print(f"training {new_model_name} ...")
+print(f"training {versioned_new_model_name} ...")
 trainer.train()
 # trainer.push_to_hub()
 
 print("saving...")
-trainer.save_model(f"{new_model_name}/final")
-tokenizer.save_pretrained(f"{new_model_name}/final")
+trainer.save_model(f"{versioned_new_model_name}")
+tokenizer.save_pretrained(f"{versioned_new_model_name}")
 
 stop = time.time()
 print(f"Training time: {(stop - start)/60} minutes")
