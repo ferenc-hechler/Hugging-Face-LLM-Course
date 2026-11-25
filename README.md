@@ -159,6 +159,29 @@ from huggingface_hub import snapshot_download
 snapshot_download(repo_id="google/gemma-3-270m-it", repo_type="model")
 ```
 
+# Performance Warnings
+
+Running the finetuning reports missing libraries causal_conv1d and flash-linear-attention:
+
+```
+pip install flash-linear-attention
+```
+
+did not remove the warning fla 0.6.0 is installed.
+
+causal_conv1d could not be installed directly instead the best matching wheel was selected:
+
+```
+python -c "import torch; print('Python:', __import__('sys').version.split()[0], '| Torch:', torch.__version__, '| CUDA available:', torch.cuda.is_available(), '| Torch CUDA:', torch.version.cuda)"
+Python: 3.13.3 | Torch: 2.15.0+cu134 | CUDA available: True | Torch CUDA: 13.4
+
+Browse for matching wheel in https://huggingface.co/Wildminder/AI-windows-whl/tree/main/causal_conv1d
+
+pip install --no-build-isolation --no-deps "C:\Users\feri\Downloads\causal_conv1d-1.7.0+d20260820.cu132torch2.14.0cxx11abi1-cp313-cp313-win_amd64.whl"      
+```
+
+
+
 # Intel GPUs
 
 https://docs.pytorch.org/docs/2.15/notes/get_start_xpu.html

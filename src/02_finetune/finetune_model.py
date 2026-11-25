@@ -25,16 +25,21 @@ NUM_EPOCHS = 1
 # new_model_name = "gemma3-finetuned"
 # new_version = "v1"
 
-model_name = "gemma3-finetuned"
-version = "v1"
-new_model_name = "gemma3-finetuned"
-new_version = "v2"
+# model_name = "gemma3-finetuned"
+# version = "v1"
+# new_model_name = "gemma3-finetuned"
+# new_version = "v2"
 
 # OOM with 8GB VRAM
 # model_name = "Qwen/Qwen3.5-2B"
 # version = None
 # new_model_name = "qwen3-5-2b-finetuned"
 # new_version = "v1"
+
+model_name = "Qwen/Qwen3.5-0.8B"
+version = None
+new_model_name = "qwen3-5-800m-finetuned"
+new_version = "v1"
 
 
 versioned_model_name = f"{model_name}/{version}" if version else model_name
