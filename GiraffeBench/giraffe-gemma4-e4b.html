@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Procedural Walking Giraffe</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #87CEEB; } /* Sky blue background */
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+
+<!--
+    CDNs for required libraries: Three.js
+    We use the latest version available without requiring module bundling.
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+    // ========================================================
+    // 1. SETUP SCENE, CAMERA, AND RENDERER
+    // ========================================================
+
+    let scene, camera, renderer;
+    let giraffe;
+    const GROUND_COLOR = 0x6aa84f; // Green ground
+    const LIMB_COLOR = 0x8b4513;   // Brown for legs
+    const BODY_COLOR = 0xad9d75;   // Tan for body
+
+    function init() {
+        // Scene setup
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87ceeb); // Sky blue
+
+        // Camera setup (Perspective view)
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 5, 15); // Elevated view to see the gait
+
+        // Renderer setup
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x666666); // Soft light
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(1, 10, 10);
+        scene.add(directionalLight);
+
+        // Environment (The Ground)
+        createGround();
+
+        // Create the Giraffe model
+        giraffe = createGiraffe();
+
+        // Add the giraffe to the scene
+        scene.add(giraffe);
+
+        // Event Listeners
+        window.addEventListener('resize', onWindowResize, false);
+
+        // Start the animation loop
+        animate();
+    }
+
+    // ========================================================
+    // 2. GEOMETRY CREATION FUNCTIONS
+    // ========================================================
+
+    function createGround() {
+        // Floor geometry
+        const planeGeometry = new THREE.PlaneGeometry(100, 100);
+        const planeMaterial = new THREE.MeshLambertMaterial({ color: GROUND_COLOR });
+        const ground = new THREE.Mesh(planeGeometry, planeMaterial);
+        ground.rotation.x = -Math.PI / 2; // Rotate to lay flat
+        ground.receiveShadow = true;
+        scene.add(ground);
+    }
+
+    /**
+     * Creates a single segment (Thigh, Shin, Head, etc.)
+     * @param {number} length
+     * @param {number} radius
+     * @returns {THREE.Mesh}
+     */
+    function createCylinderSegment(length, radius, color) {
+        const geometry = new THREE.CylinderGeometry(radius, radius, length, 12);
+        const material = new THREE.MeshPhongMaterial({ color: color });
+        const segment = new THREE.Mesh(geometry, material);
+        return segment;
+    }
+
+    function createGiraffe() {
+        // The giraffe structure uses groups to contain bones/segments
+        const giraffeGroup = new THREE.Group();
+
+        // --- 1. HEAD & NECK ---
+        const neckGroup = new THREE.Group();
+        neckGroup.position.set(0, 2, 0);
+
+        // Neck segments
+        const neck1 = createCylinderSegment(5, 0.5, BODY_COLOR);
+        const neck2 = createCylinderSegment(4, 0.4, BODY_COLOR);
+        const neck3 = createCylinderSegment(3, 0.3, BODY_COLOR);
+        neckGroup.add(neck1);
+        neck1.add(neck2);
+        neck2.add(neck3);
+
+        // Head
+        const head = new THREE.Mesh(
+            new THREE.SphereGeometry(0.7, 12, 12),
+            new THREE.MeshPhongMaterial({ color: BODY_COLOR })
+        );
+        neck3.add(head); // Head attached to the end of the neck group
+
+        // --- 2. BODY ---
+        const body = new THREE.Mesh(
+            new THREE.BoxGeometry(1.5, 1.5, 1),
+            new THREE.MeshPhongMaterial({ color: BODY_COLOR })
+        );
+        body.position.y = 0.5;
+        giraffeGroup.add(body);
+
+        // --- 3. LEGS (Right side, as the base) ---
+        const limbContainer = new THREE.Group();
+        limbContainer.position.set(1, 0, 0); // Base position
+
+        // Function to build one leg structure
+        const buildLeg = (parent) => {
+            const legGroup = new THREE.Group();
+            legGroup.position.y = 0;
+
+            // Thigh (Hips to Knee)
+            const thigh = createCylinderSegment(1.5, 0.4, LIMB_COLOR);
+            // Shin (Knee to Ankle)
+            const shin = createCylinderSegment(1.5, 0.3, LIMB_COLOR);
+            // Foot
+            const foot = new THREE.Mesh(
+                new THREE.BoxGeometry(0.4, 0.2, 0.4),
+                new THREE.MeshPhongMaterial({ color: LIMB_COLOR })
+            );
+
+            // Attachment: Shin to Thigh
+            thigh.add(shin);
+            // Attachment: Foot to Shin
+            shin.add(foot);
+
+            // The entire leg assembly is attached to the hip joint (the legGroup)
+            legGroup.add(thigh);
+
+            return legGroup;
+        };
+
+        // Build Right Side
+        const rightHip = buildLeg(limbContainer);
+        // We position the hip group relative to the body's center
+        rightHip.position.set(0.8, 0, 0);
+        limbContainer.add(rightHip);
+
+        // Build Left Side (Mirror the right side)
+        const leftHip = buildLeg(limbContainer);
+        // Mirror the position across the Y-axis
+        leftHip.scale.set(1, 1, -1);
+        leftHip.position.set(-0.8, 0, 0);
+        limbContainer.add(leftHip);
+
+        // Set the final structure
+        giraffeGroup.add(neckGroup);
+        giraffeGroup.add(limbContainer);
+
+        // Return the root group that needs to be animated
+        return giraffeGroup;
+    }
+
+
+    // ========================================================
+    // 3. ANIMATION LOGIC
+    // ========================================================
+
+    /**
+     * Applies the cyclical movement (gait) to the legs.
+     * This uses trigonometry (Sine wave) to mimic the up-and-down motion.
+     * @param {number} time The current elapsed time.
+     * @param {THREE.Group} legGroup The container for one leg.
+     * @param {number} speed The movement frequency.
+     * @param {number} offset The phase offset to stagger the legs.
+     * @param {string} jointName The name of the joint to rotate (e.g., 'Thigh').
+     * @param {number} swingAmount The maximum angle of swing (radians).
+     */
+    function animateLeg(legGroup, time, speed, offset, jointName, swingAmount) {
+        // The core movement is based on the time and the offset.
+        const angle = Math.sin((time * 0.005 * speed) + (offset * Math.PI)) * swingAmount;
+
+        // We are rotating the segment relative to its parent (the hip or knee).
+        // Find the target joint (e.g., the 'thigh' object)
+        const joint = legGroup.findмести(jointName);
+        if (joint) {
+            // Rotate the joint around the X-axis (forward/backward motion)
+            joint.rotation.x = angle;
+        }
+    }
+
+    /**
+     * Updates the position and rotation of all parts of the giraffe.
+     * @param {number} delta Time elapsed since the last frame.
+     */
+    function updateGiraffe(time) {
+        const legContainer = giraffe.getObjectByName('limbContainer');
+        if (!legContainer) return;
+
+        // Get the leg groups (Right and Left)
+        const rightLeg = legContainer.getObjectByName('rightHip');
+        const leftLeg = legContainer.getObjectByName('leftHip');
+
+        if (rightLeg && leftLeg) {
+            // --- Right Leg Gait (Swing 1) ---
+            // Swing calculation: (Time * 1.0) + 0 (offset)
+            animateLeg(rightLeg, time, 1.0, 0, 'getObjectByName(0).children[0]', 0.5);
+            // Note: Due to dynamic grouping, we must find the actual thigh joint mesh.
+
+            // Simplified approach for demonstration: Apply rotation directly to the contained objects
+            const rThigh = rightLeg.getObjectByName('thigh');
+            if (rThigh) {
+                const rAngle = Math.sin(time * 0.005) * 0.5;
+                rThigh.rotation.x = rAngle;
+            }
+
+            // --- Left Leg Gait (Swing 2 - 90 degrees offset) ---
+            const lThigh = leftLeg.getObjectByName('thigh');
+            if (lThigh) {
+                const lAngle = Math.sin(time * 0.005 + 1.5) * 0.5;
+                lThigh.rotation.x = lAngle;
+            }
+        }
+
+        // Simple body movement: Sway slightly with time
+        giraffe.rotation.y = Math.sin(time * 0.001) * 0.1;
+    }
+
+
+    // ========================================================
+    // 4. GAME LOOP AND UTILITIES
+    // ========================================================
+
+    function animate(time) {
+        requestAnimationFrame(animate);
+
+        // 1. Update the Giraffe's movement
+        updateGiraffe(time);
+
+        // 2. Camera/Target Following: Keep the camera focused on the giraffe
+        const targetPosition = new THREE.Vector3(Math.sin(time * 0.001) * 5, 5, 15);
+        camera.position.lerp(targetPosition, 0.05);
+        camera.lookAt(giraffe.position);
+
+        // 3. Render the scene
+        renderer.render(scene, camera);
+    }
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    // Start the application
+    init();
+
+</script>
+</body>
+</html>

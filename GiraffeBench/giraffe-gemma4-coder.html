@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Walking Giraffe</title>
+    <!-- Load Three.js using a reliable CDN approach -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body { margin: 0; }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <script type="text/javascript">
+        // Robust check for Three.js
+        let initThree = async () => {
+            if (typeof THREE === 'undefined') {
+                console.warn("Three.js not found via unpkg, attempting fallback...");
+                // If unpkg failed, we can try to fetch it manually if needed, 
+                // but usually <script src="https://unpkg.com/three/" /> works well in modern browsers.
+            }
+            return typeof THREE !== 'undefined';
+        };
+
+        async function init() {
+            if (!await initThree()) {
+                console.error("Failed to load Three.js. Please ensure you are connected to the internet or provide a local three.js file.");
+                return;
+            }
+
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x87ceeb); // Sky blue
+
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 2, 10);
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('container').appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const sunLight = new THREE.DirectionalLight(0xffffff, 1);
+            sunLight.position.set(5, 10, 5);
+            scene.add(sunLight);
+
+            // Ground
+            const ground = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), new THREE.MeshStandardMaterial({ color: 0x33aa33 }));
+            ground.rotation.x = -Math.PI / 2;
+            scene.add(ground);
+
+            // Giraffe Model and Animation
+            function createGiraffe() {
+                const giraffe = new THREE.Group();
+                const bodyMat = new THREE.MeshStandardMaterial({ color: 0xf4a441, roughness: 0.8 });
+                
+                // Body
+                const body = new THREE.Mesh(new THREE.SphereGeometry(1.2, 32, 32), bodyMat);
+                body.scale.set(1.5, 0.7, 1);
+                body.position.y = 1.5;
+                giraffe.add(body);
+
+                // Neck
+                const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.15, 3, 16), bodyMat);
+                neck.position.set(0, 3, 0);
+                giraffe.add(neck);
+
+                // Head
+                const head = new THREE.Mesh(new THREE.SphereGeometry(0.4, 16, 16), bodyMat);
+                head.position.set(0, 4.5, 0);
+                giraffe.add(head);
+
+                // Legs (with pivots for better animation)
+                for(let i=0; i<4; i++) {
+                    const legPivot = new THREE.Object3D();
+                    const xOffset = (i < 2 ? 1 : -1) * 0.6;
+                    const zOffset = (i % 2 === 0 ? 1 : -1) * 0.4;
+                    legPivot.position.set(xOffset, 0.7, zOffset);
+                    
+                    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 2, 8), bodyMat);
+                    leg.position.y = -0.5; // Offset from pivot so it rotates around the top
+                    legPivot.add(leg);
+                    giraffe.add(legPivot);
+                }
+
+                return giraffe;
+            }
+
+            const giraffe = createGiraffe();
+            scene.add(giraffe);
+
+            function animate() {
+                requestAnimationFrame(animate);
+                const time = Date.now() * 0.002;
+
+                // Neck swaying
+                if (giraffe.children[1]) {
+                    giraffe.children[1].rotation.y = Math.sin(time) * 0.1;
+                    giraffe.children[1].rotation.x = Math.cos(time) * 0.1;
+                }
+
+                // Legs walking animation
+                for (let i = 0; i < 4; i++) {
+                   const legPivot = giraffe.children[3 + i];
+                   if (legPivot) {
+                       legPivot.rotation.z = Math.sin(time + i) * 0.3;
+                   }
+                }
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+        }
+
+        init();
+
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+    </script>
+</body>
+</html>
