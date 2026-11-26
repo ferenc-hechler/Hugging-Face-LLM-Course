@@ -1,0 +1,2 @@
+FROM mannix/gemma4-98e-v5-coder:CD-Q3_K_M 
+PARAMETER num_ctx 256000
