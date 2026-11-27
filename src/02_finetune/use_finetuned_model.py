@@ -1,7 +1,7 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
-# path = "Qwen/Qwen3-0.6B"
-path = "qwen3-finetuned/v2"
+# path = "Qwen/Qwen3.5-0.8B"
+path = "qwen3-5-800m-finetuned/v1"
 # path = "google/gemma-3-270m-it"
 # path = "gemma3-finetuned/v1"
 
