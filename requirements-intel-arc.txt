@@ -1,0 +1,20 @@
+--extra-index-url https://download.pytorch.org/whl/xpu
+torch
+torchvision
+
+
+datasets 
+evaluate 
+transformers[sentencepiece,torch]
+
+flash-linear-attention[xpu]
+
+huggingface_hub
+
+jupyter 
+ipykernel
+
+codecarbon
+
+python-dotenv
+

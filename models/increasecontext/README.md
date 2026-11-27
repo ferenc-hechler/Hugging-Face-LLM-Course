@@ -6,5 +6,5 @@ PARAMETER num_ctx 16384
 ```
 
 ```
-ollama create gemma4-12b-16k-ctx -f Modelfile_gemma4-12b-16k-ctx.txt
+ollama create gemma4-26b-256k-ctx -f Modelfile_gemma4-26b-256k-ctx.txt
 ```
